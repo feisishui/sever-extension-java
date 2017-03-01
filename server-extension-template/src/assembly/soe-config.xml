@@ -22,7 +22,7 @@
   <Company/>
   <Version>${project.version}</Version>
   <Targets>
-    <Target name="server" version="10.4"/>
+    <Target name="server" version="10.5"/>
   </Targets>
   <AddInID>{${soe.uuid}}</AddInID>
   <AddIn language="Java">
