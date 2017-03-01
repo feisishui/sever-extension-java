@@ -1,7 +1,7 @@
 # sever-extension-java
 Server extensions allow developers to change and extend the capabilities of ArcGIS Server map and 
 image services. This repository provides a template intended to bootstrap the development of both types of Java-based 
-server extensions, server object extensions (SOEs) and server object interceptors (SOEs). It also includes two REST-based
+server extensions, Server Object Extensions (SOEs) and Server Object Interceptors (SOEs). It also includes two REST-based
 examples, a simple row-level security filter SOI and an SOE for server-clustering. In general, this project focuses on 
 REST server extensions.
 
