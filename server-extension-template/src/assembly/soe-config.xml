@@ -29,7 +29,7 @@
     <ServerObjectType>
       <Name>MapServer</Name>
       <ExtensionTypes>
-        <ExtensionType class="com.esri.arcgis.soe.MyServerObjectExtension" id="com.esri.arcgis.soe.MyServerObjectExtension" library="${project.artifactId}-${project.version}.jar">
+        <ExtensionType class="com.esri.serverextension.myext.MyServerObjectExtension" id="com.esri.serverextension.myext.MyServerObjectExtension" library="${project.artifactId}-${project.version}.jar">
           <Name>${project.name}</Name>
           <DisplayName>My SOE</DisplayName>
           <Description>${project.description}</Description>

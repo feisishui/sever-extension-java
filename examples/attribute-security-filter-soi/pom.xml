@@ -17,7 +17,7 @@
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.esri.arcgis</groupId>
+        <groupId>com.esri.serverextensions</groupId>
         <artifactId>server-extension-java</artifactId>
         <version>0.2.0</version>
         <relativePath>../../pom.xml</relativePath>
@@ -29,7 +29,7 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>com.esri.arcgis</groupId>
+            <groupId>com.esri.serverextensions</groupId>
             <artifactId>server-extension-core</artifactId>
             <version>${parent.version}</version>
         </dependency>

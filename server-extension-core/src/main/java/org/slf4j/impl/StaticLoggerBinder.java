@@ -14,7 +14,7 @@
 
 package org.slf4j.impl;
 
-import com.esri.arcgis.soe.template.util.LogAdaptorFactory;
+import com.esri.serverextension.core.util.LogAdaptorFactory;
 import org.slf4j.ILoggerFactory;
 
 public class StaticLoggerBinder {
