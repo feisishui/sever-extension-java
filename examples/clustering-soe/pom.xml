@@ -22,10 +22,9 @@
         <version>0.2.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>attribute-security-filter-soi</artifactId>
-    <name>attribute-security-filter-soi</name>
-    <description>A Server Object Interceptor (SOI) example to enable feature-level security for query operations
-    </description>
+    <artifactId>clustering-soe</artifactId>
+    <name>clustering-soe</name>
+    <description>A Server Object Extension (SOE) example for clustering point data server-side.</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
