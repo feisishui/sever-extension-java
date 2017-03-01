@@ -1,15 +1,15 @@
 # sever-extension-java
 Server extensions allow developers to change and extend the capabilities of ArcGIS Server map and 
-image services. This repository provides a template intended to bootstrap the development of both types of Java-based 
+image services. This project provides a template intended to bootstrap the development of both types of Java-based 
 server extensions, Server Object Extensions (SOEs) and Server Object Interceptors (SOEs). It also includes two REST-based
-examples, a simple row-level security filter SOI and an SOE for server-clustering. In general, this project focuses on 
+examples, a simple row-level security filter SOI and an SOE for server-side clustering. In general, this project limits itself on 
 REST server extensions.
 
 ## Features
-* Maven project template - A template project you can fork and clone for developing your own server extensions
+* Maven project template - A template project to use as a starting point for developing server extensions
 * Boilerplate code - Commonly used glue-code to connect custom business logic with the GIS Server framework
 * Simple row-level security filter - An example SOI for implementing row-level access control for query operations 
-* Server-side clustering - An example SOE for clustering point data server-side 
+* Server-side clustering - An example SOE for grouping point data into clusters server-side and returns the generated clusters as features
 
 ## Instructions
 1. Fork and then clone the repo. 
