@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017 Esri
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.​
+  -->
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.esri.arcgis</groupId>
+        <artifactId>server-extension-java</artifactId>
+        <version>0.2.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <artifactId>attribute-security-filter-soi</artifactId>
+    <name>attribute-security-filter-soi</name>
+    <description>A Server Object Interceptor (SOI) sample to enable feature-level security for query operations
+    </description>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.esri.arcgis</groupId>
+            <artifactId>server-extension-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>src/main/assemblies</exclude>
+                    </excludes>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <version>2.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.safehaus.jug</groupId>
+                        <artifactId>jug</artifactId>
+                        <version>2.0.0</version>
+                        <classifier>asl</classifier>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import org.safehaus.uuid.UUIDGenerator
+                                import java.util.Date
+                                def uuid = UUIDGenerator.getInstance().generateRandomBasedUUID()
+                                project.properties.setProperty('soe.uuid', uuid.toString())
+                                def date = new Date()
+                                project.properties.setProperty('soe.timestamp', date.format('EEE MMM d k:mm:ss z yyyy'))
+                                project.properties.setProperty('soe.hhmm', date.format('HHmm'))
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/assembly/soe-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>rename-to-dot-soe</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <move
+                                        file="${project.build.directory}/${project.artifactId}-${project.version}-soe-assembly.zip"
+                                        tofile="${project.build.directory}/${project.build.finalName}.soe"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
