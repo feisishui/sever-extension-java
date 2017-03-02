@@ -28,7 +28,7 @@
     <ServerObjectType>
       <Name>MapServer</Name>
       <ExtensionTypes>
-        <ExtensionType class="com.esri.serverextension.clustering.AttributeSecurityFilter" id="com.esri.serverextension.clustering.AttributeSecurityFilter" library="${project.artifactId}-${project.version}.jar">
+        <ExtensionType class="com.esri.serverextension.cluster.AttributeSecurityFilter" id="com.esri.serverextension.cluster.AttributeSecurityFilter" library="${project.artifactId}-${project.version}.jar">
           <Name>${project.name}</Name>
           <DisplayName>Attribute Security Filter</DisplayName>
           <Description>${project.description}</Description>

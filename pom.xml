@@ -23,8 +23,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>server-extension-core</module>
-        <module>examples/attribute-security-filter-soi</module>
         <module>server-extension-template</module>
+        <module>examples/attribute-security-filter-soi</module>
+        <module>examples/clustering-soe</module>
     </modules>
     <properties>
         <jdk.version>1.8</jdk.version>

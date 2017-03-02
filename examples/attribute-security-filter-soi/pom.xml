@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.esri.serverextensions</groupId>
             <artifactId>server-extension-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>
