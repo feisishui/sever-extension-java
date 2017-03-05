@@ -41,3 +41,13 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+.idea/
+examples/attribute-security-filter-soi/target/
+examples/clustering-soe/clustering-soe.iml
+examples/clustering-soe/target/
+server-extension-core/server-extension-core.iml
+server-extension-core/target/
+server-extension-java.iml
+server-extension-template/server-extension-template.iml
+server-extension-template/target/
+target/
