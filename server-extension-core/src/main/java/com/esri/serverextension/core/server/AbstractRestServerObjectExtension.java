@@ -82,6 +82,9 @@ public abstract class AbstractRestServerObjectExtension implements
     public final void init(IServerObjectHelper serverObjectHelper)
             throws IOException, AutomationException {
         try {
+            // prevents server extension from failing to shut down
+            Cleaner.trackObjectsInCurrentThread();
+
             ServerObjectExtProperties annotation = this.getClass()
                     .getAnnotation(ServerObjectExtProperties.class);
             isInterceptor = annotation.interceptor();
@@ -105,6 +108,10 @@ public abstract class AbstractRestServerObjectExtension implements
         logger.info("Shutting down ...");
         doShutdown();
         ((ConfigurableApplicationContext) applicationContext).close();
+
+        // prevents server extension from failing to shut down
+        Cleaner.releaseAllInCurrentThread();
+
         logger.info("Shut down completed.");
         delegateMappings = null;
         serverContext = null;
