@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright (c) 2017 Esri
   ~
@@ -11,7 +12,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.​
   -->
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ESRI.Configuration xmlns="http://schemas.esri.com/Desktop/AddIns">
   <Name>${project.name}</Name>
   <Description>${project.description}</Description>

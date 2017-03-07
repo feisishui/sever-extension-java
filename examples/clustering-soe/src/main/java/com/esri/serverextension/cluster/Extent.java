@@ -25,34 +25,40 @@ public class Extent {
 
     /**
      * Construct an extent.  This is where everything gets assigned
+     *
      * @param xmin
      * @param ymin
      * @param xmax
      * @param ymax
      */
-    public Extent(double xmin, double ymin, double xmax, double ymax){
+    public Extent(double xmin, double ymin, double xmax, double ymax) {
         _xmin = xmin;
         _ymin = ymin;
         _xmax = xmax;
         _ymax = ymax;
     }
 
-    public double getWidth(){
+    public double getWidth() {
         return _xmax - _xmin;
     }
-    public double getHeight(){
+
+    public double getHeight() {
         return _ymax - _ymin;
     }
-    public double getXMin(){
+
+    public double getXMin() {
         return _xmin;
     }
-    public double getYMin(){
+
+    public double getYMin() {
         return _ymin;
     }
-    public double getXMax(){
+
+    public double getXMax() {
         return _xmax;
     }
-    public double getYMax(){
+
+    public double getYMax() {
         return _ymax;
     }
 }

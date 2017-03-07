@@ -22,31 +22,31 @@ import java.util.ArrayList;
 public class Cluster {
 
     private double _clusterCount;
-    private Point  _point;
+    private Point _point;
     private ArrayList<Feature> _features;
 
     //A cluster needs to be created with at least one feature
-    public Cluster(Feature feature){
+    public Cluster(Feature feature) {
         _features = new ArrayList<>();
         _point = new Point(feature.getPoint());
         _clusterCount = feature.getValue();
         _features.add(feature);
     }
 
-    public Point getPoint(){
+    public Point getPoint() {
         return _point;
     }
 
-    public void setClusterCount(double ct){
+    public void setClusterCount(double ct) {
         _clusterCount = ct;
     }
 
-    public void addFeature(Feature feature){
+    public void addFeature(Feature feature) {
         double value = feature.getValue();
         double count = _clusterCount;
         _features.add(feature);
-        double ptc = value/(count + value);
-        double ctc = count/(count + value);
+        double ptc = value / (count + value);
+        double ctc = count / (count + value);
         Point cluster = _point;
         Point p = feature.getPoint();
 
@@ -57,15 +57,15 @@ public class Cluster {
         _clusterCount += value;
     }
 
-    public void addPointCluster(Feature feature, double ptCount){
+    public void addPointCluster(Feature feature, double ptCount) {
         double count, x, y;
         count = getValue();
 
         Point p = feature.getPoint();
         getFeatures().add(feature);
 
-        double ptc = ptCount/(count + ptCount);
-        double ctc = count/(count + ptCount);
+        double ptc = ptCount / (count + ptCount);
+        double ctc = count / (count + ptCount);
 
         x = (p.x * ptc + (_point.x * ctc));
         y = (p.y * ptc + (_point.y * ctc));
@@ -74,23 +74,20 @@ public class Cluster {
         _point.y = y;
     }
 
-    public double getValue(){
+    public double getValue() {
         return _clusterCount;
     }
 
-    public ArrayList<Feature> getFeatures(){
+    public ArrayList<Feature> getFeatures() {
         return _features;
     }
 
 
-
-
-
-    public void print(){
-        System.out.print("Cluster  value:"+_clusterCount+"  ");
+    public void print() {
+        System.out.print("Cluster  value:" + _clusterCount + "  ");
         _point.print();
         System.out.println();
-        for(Feature f:_features){
+        for (Feature f : _features) {
             f.print();
         }
         System.out.println("==============");

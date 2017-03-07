@@ -22,22 +22,22 @@ public class Feature {
     private double _value;
     private Point _point;
 
-    public Feature(Point point, double value){
+    public Feature(Point point, double value) {
         _point = point;
         _value = value;
     }
 
-    public double getValue(){
+    public double getValue() {
         return _value;
     }
 
 
-    public Point getPoint(){
+    public Point getPoint() {
         return _point;
     }
 
-    public void print(){
-        System.out.print("Feature  value:"+_value+"  ");
+    public void print() {
+        System.out.print("Feature  value:" + _value + "  ");
         _point.print();
         System.out.println();
     }

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("com.esri.arcgis.soi.attributesecurityfilter")
+@ComponentScan("com.esri.serverextension.attributesecurityfilter")
 public class AttributeSecurityFilterConfig {
 
     public AttributeSecurityFilterConfig() {

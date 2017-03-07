@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Configuration
-@ComponentScan("com.esri.arcgis.soe.template")
+@ComponentScan("com.esri.serverextension.core")
 public class DefaultConfig {
 
     @Inject

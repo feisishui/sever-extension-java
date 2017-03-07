@@ -20,28 +20,30 @@ package com.esri.serverextension.cluster;
 public class Point {
     public double x;
     public double y;
-    public Point(double x, double y){
+
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
-    public Point(Point pt){
+
+    public Point(Point pt) {
         x = pt.x;
         y = pt.y;
     }
 
-    public double squareDistance(Point pt){
+    public double squareDistance(Point pt) {
         double dx = pt.x - x;
         double dy = pt.y - y;
-        return (dx*dx) + (dy*dy);
+        return (dx * dx) + (dy * dy);
     }
-    public double distance(Point pt){
+
+    public double distance(Point pt) {
         return Math.sqrt(squareDistance(pt));
     }
 
 
-
-    public void print(){
-        System.out.print("("+x+","+y+")");
+    public void print() {
+        System.out.print("(" + x + "," + y + ")");
 
     }
 }
