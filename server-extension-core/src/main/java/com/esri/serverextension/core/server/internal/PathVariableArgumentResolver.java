@@ -16,8 +16,10 @@ package com.esri.serverextension.core.server.internal;
 
 import com.esri.serverextension.core.server.RestDelegate;
 import com.esri.serverextension.core.server.RestRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.core.MethodParameter;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriTemplate;
@@ -50,10 +52,22 @@ public final class PathVariableArgumentResolver implements ArgumentResolver {
             if (uriTemplate.matches(path)) {
                 Map<String, String> uriTemplateVars = uriTemplate.match(path);
                 if (uriTemplateVars != null) {
-                    value = uriTemplateVars.get(variable);
+                    if (StringUtils.isEmpty(variable)) {
+                        // PathVariable does not contain name
+                        // get first value in list
+                        if (!CollectionUtils.isEmpty(uriTemplateVars)) {
+                            value = uriTemplateVars.values().iterator().next();
+                        }
+                    } else {
+                        value = uriTemplateVars.get(variable);
+                    }
                     break;
                 }
             }
+        }
+
+        if (value == null) {
+            return value;
         }
 
         SimpleTypeConverter converter = new SimpleTypeConverter();
