@@ -42,6 +42,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 .idea/
+examples/attribute-security-filter-soi/attribute-security-filter-soi.iml
 examples/attribute-security-filter-soi/target/
 examples/clustering-soe/clustering-soe.iml
 examples/clustering-soe/target/
