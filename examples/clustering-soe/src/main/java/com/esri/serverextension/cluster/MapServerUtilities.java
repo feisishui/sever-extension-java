@@ -63,4 +63,19 @@ public class MapServerUtilities {
         }
     }
 
+    public static final IMapLayerInfo getPointFeatureLayerByID(int id,
+                                                               ServerObjectExtensionContext serverContext) {
+        List<IMapLayerInfo> layerInfoList = getPointFeatureLayers(serverContext);
+        for (IMapLayerInfo layerInfo : layerInfoList) {
+            try {
+                if (layerInfo.getID() == id) {
+                    return layerInfo;
+                }
+            } catch (IOException ex) {
+                throw new ArcObjectsInteropException(
+                        String.format("Failed to access point feature layer: %1$d", id));
+            }
+        }
+        throw new IllegalArgumentException(String.format("No such point feature layer: %1$d", id));
+    }
 }

@@ -15,15 +15,13 @@
 package com.esri.serverextension.cluster;
 
 import com.esri.arcgis.carto.IMapLayerInfo;
-import com.esri.serverextension.core.server.ServerObjectExtensionContext;
-import com.esri.serverextension.core.util.ArcObjectsInteropException;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.esri.arcgis.interop.extn.ServerObjectExtProperties;
 import com.esri.arcgis.server.json.JSONArray;
 import com.esri.arcgis.server.json.JSONObject;
+import com.esri.serverextension.core.server.ServerObjectExtensionContext;
+import com.esri.serverextension.core.util.ArcObjectsInteropException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,21 +39,20 @@ public class RootResource {
 		rootResource.put("description", annotation.description());
 
 		JSONArray layersArray = new JSONArray();
-		rootResource.put("layers", layersArray);
-
 		List<IMapLayerInfo> pointFeatureLayers = MapServerUtilities.getPointFeatureLayers(serverContext);
 		for (IMapLayerInfo layerInfo : pointFeatureLayers) {
 			try {
-				JSONObject siteLayer = new JSONObject();
-				siteLayer.put("name", layerInfo.getName());
-				siteLayer.put("id", layerInfo.getID());
-				siteLayer.put("description", layerInfo.getDescription());
-				layersArray.put(siteLayer);
+				JSONObject layer = new JSONObject();
+				layer.put("name", layerInfo.getName());
+				layer.put("id", layerInfo.getID());
+				layer.put("description", layerInfo.getDescription());
+				layersArray.put(layer);
 			} catch (IOException ex) {
 				throw new ArcObjectsInteropException(
-					"Failed to get details from map layer info.");
+						"Failed to get details from map layer info.");
 			}
 		}
+		rootResource.put("layers", layersArray);
 		return rootResource;
 	}
 }
