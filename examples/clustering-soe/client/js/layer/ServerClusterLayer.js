@@ -303,7 +303,7 @@ define([
                 query.outSpatialreference = this._saveMap.spatialReference;
                 query.geometry = this._saveMap.extent;
                 query.clusterField = fieldName;
-                query.where = "Issue_Date >= date '2017-01-01 00:00:00'";
+                query.where = this.where;
 
                 var deferredQueryTask = queryTask.execute(query);
 

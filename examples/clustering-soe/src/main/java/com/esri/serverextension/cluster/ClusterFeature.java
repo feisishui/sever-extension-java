@@ -17,31 +17,28 @@ package com.esri.serverextension.cluster;
 /**
  * Created by kcoffin on 2/8/17.
  */
-public class ClusterPoint {
-    public double x;
-    public double y;
-    public ClusterPoint(double x, double y){
-        this.x = x;
-        this.y = y;
-    }
-    public ClusterPoint(ClusterPoint pt){
-        x = pt.x;
-        y = pt.y;
+public class ClusterFeature {
+
+    private double _value;
+    private ClusterPoint _point;
+
+    public ClusterFeature(ClusterPoint point, double value){
+        _point = point;
+        _value = value;
     }
 
-    public double squareDistance(ClusterPoint pt){
-        double dx = pt.x - x;
-        double dy = pt.y - y;
-        return (dx*dx) + (dy*dy);
-    }
-    public double distance(ClusterPoint pt){
-        return Math.sqrt(squareDistance(pt));
+    public double getValue(){
+        return _value;
     }
 
 
+    public ClusterPoint getPoint(){
+        return _point;
+    }
 
     public void print(){
-        System.out.print("("+x+","+y+")");
-
+        System.out.print("ClusterFeature  value:"+_value+"  ");
+        _point.print();
+        System.out.println();
     }
 }

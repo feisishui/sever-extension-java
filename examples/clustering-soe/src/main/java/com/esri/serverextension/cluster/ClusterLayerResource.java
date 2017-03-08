@@ -65,15 +65,22 @@ public class ClusterLayerResource {
         try {
             IFeatureClass featureClass = MapServerUtilities.getPointFeatureClassByLayerID(layerId, serverContext);
             IQueryFilter queryFilter = getQueryFilter(input, featureClass.getShapeFieldName());
+            ClusterAssemblerCallbackHandler clusterAssemblerCallbackHandler = new ClusterAssemblerCallbackHandler(input.getClusterField());
             GeodatabaseTemplate geodatabaseTemplate = new GeodatabaseTemplate();
+            geodatabaseTemplate.query(featureClass, queryFilter, clusterAssemblerCallbackHandler);
+            ClusterExtent clusterExtent = new ClusterExtent(
+                    input.getBbox().getXmin(),
+                    input.getBbox().getYmin(),
+                    input.getBbox().getXmax(),
+                    input.getBbox().getYmax()
+            );
             ClusterAssembler clusterAssembler = new ClusterAssembler(
+                    clusterAssemblerCallbackHandler.getClusterFeatures(),
                     input.getMapUnitsPerPixel(),
                     input.getClusterDistanceInPixels(),
-                    input.getBbox(),
-                    input.getClusterField()
+                    clusterExtent
             );
-            ClusterAssemblerCallbackHandler clusterAssemblerCallbackHandler = new ClusterAssemblerCallbackHandler(clusterAssembler);
-            geodatabaseTemplate.query(featureClass, queryFilter, clusterAssemblerCallbackHandler);
+
             FeatureSet featureSet = new FeatureSet();
             featureSet.setDisplayFieldName(input.getClusterField());
             Field field = new Field(input.getClusterField(),
@@ -83,7 +90,6 @@ public class ClusterLayerResource {
             featureSet.setFields(fields);
             featureSet.setSpatialReference(getOutSpatialReference(input, serverContext));
             featureSet.setGeometryType(GeometryType.esriGeometryPoint);
-            clusterAssembler.buildClusters();
             List<Cluster> clusters = clusterAssembler.getClusters();
             if (!CollectionUtils.isEmpty(clusters)) {
                 List<Feature> features = new ArrayList<>(clusterAssembler.getClusters().size());
@@ -102,14 +108,6 @@ public class ClusterLayerResource {
                     clusterFeature.setAttributes(attributes);
                     features.add(clusterFeature);
                 }
-                featureSet.setFeatures(features);
-            } else {
-                List<Feature> features = new ArrayList<>(1);
-                Feature clusterFeature = new Feature();
-                Map<String, Object> attributes = new LinkedHashMap<>();
-                attributes.put(input.getClusterField().intern(), clusterAssemblerCallbackHandler.getFeatureCount());
-                clusterFeature.setAttributes(attributes);
-                features.add(clusterFeature);
                 featureSet.setFeatures(features);
             }
             return featureSet;

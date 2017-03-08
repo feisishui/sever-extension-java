@@ -17,36 +17,48 @@ package com.esri.serverextension.cluster;
 import com.esri.arcgis.geodatabase.IFeature;
 import com.esri.arcgis.geodatabase.IField;
 import com.esri.arcgis.geodatabase.IRow;
+import com.esri.arcgis.geometry.IGeometry;
+import com.esri.arcgis.geometry.IPoint;
 import com.esri.serverextension.core.geodatabase.GeodatabaseFieldMap;
 import com.esri.serverextension.core.geodatabase.GeodatabaseObjectCallbackHandler;
+import com.esri.serverextension.core.geodatabase.GeodatabaseObjectMapper;
 import com.esri.serverextension.core.rest.api.Feature;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClusterAssemblerCallbackHandler implements GeodatabaseObjectCallbackHandler {
 
     private GeodatabaseFieldMap fieldMap;
-    private ClusterAssembler clusterAssembler;
+    private String clusterFieldName;
+    private int clusterFieldIndex = -1;
     private int featureCount = 0;
+    private ArrayList<ClusterFeature> clusterFeatures = new ArrayList<>();
 
-    public ClusterAssemblerCallbackHandler(ClusterAssembler clusterAssembler) {
-        this.clusterAssembler = clusterAssembler;
+    public ClusterAssemblerCallbackHandler(String clusterFieldName) {
+        this.clusterFieldName = clusterFieldName;
     }
 
     public int getFeatureCount() {
         return featureCount;
     }
 
+    public ArrayList<ClusterFeature> getClusterFeatures() {
+        return clusterFeatures;
+    }
+
     @Override
     public void setGeodatabaseFieldMap(GeodatabaseFieldMap fieldMap) throws IOException {
         this.fieldMap = fieldMap;
+        clusterFieldIndex = fieldMap.get(clusterFieldName).getIndex();
     }
 
     @Override
     public void processRow(IRow row) throws IOException {
-        throw new UnsupportedOperationException("This class only handles features.");
+        throw new UnsupportedOperationException("This callback handler only supports features.");
     }
 
     @Override
@@ -56,9 +68,19 @@ public class ClusterAssemblerCallbackHandler implements GeodatabaseObjectCallbac
         for (GeodatabaseFieldMap.FieldIndex fieldIndex : fieldMap.getFieldIndices()) {
             attributes.put(fieldIndex.getField().getName(), feature.getValue(fieldIndex.getIndex()));
         }
-        Feature f = new Feature();
-        f.setGeometry(feature.getShape());
-        f.setAttributes(attributes);
-        clusterAssembler.addFeature(f);
+        IGeometry geometry = feature.getShape();
+        if (geometry instanceof IPoint && !geometry.isEmpty()) {
+            IPoint point = (IPoint)geometry;
+            ClusterPoint clusterPoint = new ClusterPoint(point.getX(), point.getY());
+            Object value = feature.getValue(clusterFieldIndex);
+            if (value == null) {
+                return;
+            }
+            if (value instanceof Number) {
+                ClusterFeature clusterFeature = new ClusterFeature(clusterPoint,
+                        ((Number) value).doubleValue());
+                clusterFeatures.add(clusterFeature);
+            }
+        }
     }
 }

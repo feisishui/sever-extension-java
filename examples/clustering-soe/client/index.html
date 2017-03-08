@@ -25,6 +25,12 @@
             left: 400px;
             z-index: 50;
         }
+        #WhereWrapper {
+            position: absolute;
+            top: 15px;
+            left: 800px;
+            z-index: 50;
+        }
         #HomeButton {
             position: absolute;
             top: 95px;
@@ -111,6 +117,7 @@
             var url = "http://localhost:6080/arcgis/rest/services/Clustering/MapServer/exts/clustering/layers/0";
             var clusterLayer = new ServerClusterLayer({url:url, id:"clusters"});
             clusterLayer.clusterField = "Valuation";
+            clusterLayer.where = "Issue_Date >= date '2017-01-01 00:00:00'";
 
             //add the legend
             /*
@@ -133,6 +140,14 @@
                 function (e) {
                     console.log(e);
                     clusterLayer.clusterField = e.currentTarget.options[e.currentTarget.selectedIndex].value;
+                    clusterLayer.refreshLayer();
+                }
+            );
+
+            on(dom.byId("whereW"), "change",
+                function (e) {
+                    console.log(e);
+                    clusterLayer.where = e.currentTarget.value;
                     clusterLayer.refreshLayer();
                 }
             );
@@ -169,6 +184,15 @@
         <option value="F__of_Residential_Dwelling_Units"># of Residential Dwelling Units</option>
         <option value="Floor_Area_L_A__Building_Code_Definition">Floor Area-L_A_ Building Code Definition</option>
     </select>
+
+</div>
+
+<div id="WhereWrapper">
+
+
+    <label for="whereW">Where:</label>
+
+    <input type="text" id="whereW" name="whereW" size="50" value="Issue_Date >= date '2017-01-01 00:00:00'"/>
 
 </div>
 
