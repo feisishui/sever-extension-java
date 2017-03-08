@@ -73,8 +73,8 @@ public class ClusterAssembler {
         this.clusterDistanceInPixels = clusterDistanceInPixels;
         cellSize = mapUnitsPerPixel * this.clusterDistanceInPixels;
         this.bbox = bbox;
-        numColumns = getGridColumn(bbox.getWidth()) + 1;
-        numRows = getGridRow(bbox.getHeight()) + 1;
+        numColumns = getGridColumn(bbox.getXmax()) - getGridColumn(bbox.getXmin()) + 1;
+        numRows = getGridRow(bbox.getYmax()) - getGridRow(bbox.getYmin()) + 1;
         clusters = new ArrayList<>();
         this.clusterFieldName = clusterFieldName;
     }
@@ -93,12 +93,12 @@ public class ClusterAssembler {
      * assembled clusters.
      */
     public void buildClusters() {
-//        for (Cluster cluster : clusters) {
-//            fixCluster(cluster);
-//        }
-//        for (Cluster cluster : clusters) {
-//            fixCluster(cluster);
-//        }
+        for (Cluster cluster : clusters) {
+            fixCluster(cluster);
+        }
+        for (Cluster cluster : clusters) {
+            fixCluster(cluster);
+        }
     }
 
     /**
@@ -150,7 +150,7 @@ public class ClusterAssembler {
         if (cell != null) {
             cell.remove(cluster);
         } else {
-            System.out.println("Programming error");
+            throw new IllegalStateException("Unexpected cluster state.");
         }
     }
 
@@ -188,8 +188,7 @@ public class ClusterAssembler {
 
         //should never happen as all features should come from within the extent
         if (row < 0 || column < 0 || row >= numRows || column >= numColumns) {
-            System.out.println("There's an error in the query");
-            return null;
+            throw new IllegalStateException("There's an error in the query");
         }
 
         int yStart = row;
@@ -357,8 +356,6 @@ public class ClusterAssembler {
                 cell.add(cluster);
             }
         }
-
-
     }
 
     private double getFeatureValue(Feature feature) {

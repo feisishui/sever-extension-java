@@ -22,8 +22,8 @@ import com.esri.arcgis.geometry.Point;
 import com.esri.arcgis.interop.Cleaner;
 import com.esri.arcgis.server.json.JSONObject;
 import com.esri.serverextension.core.geodatabase.GeodatabaseTemplate;
+import com.esri.serverextension.core.rest.api.*;
 import com.esri.serverextension.core.rest.api.Feature;
-import com.esri.serverextension.core.rest.api.FeatureSet;
 import com.esri.serverextension.core.rest.api.Field;
 import com.esri.serverextension.core.rest.api.FieldType;
 import com.esri.serverextension.core.server.ServerObjectExtensionContext;
@@ -82,11 +82,15 @@ public class ClusterLayerResource {
             fields.add(field);
             featureSet.setFields(fields);
             featureSet.setSpatialReference(getOutSpatialReference(input, serverContext));
+            featureSet.setGeometryType(GeometryType.esriGeometryPoint);
             clusterAssembler.buildClusters();
             List<Cluster> clusters = clusterAssembler.getClusters();
             if (!CollectionUtils.isEmpty(clusters)) {
                 List<Feature> features = new ArrayList<>(clusterAssembler.getClusters().size());
                 for (Cluster cluster : clusterAssembler.getClusters()) {
+                    if (cluster.getValue() == 0.0d) {
+                        continue;
+                    }
                     Feature clusterFeature = new Feature();
                     ClusterPoint clusterPoint = cluster.getPoint();
                     IPoint point = new Point();
@@ -117,9 +121,9 @@ public class ClusterLayerResource {
 
     private IQueryFilter getQueryFilter(ClusterQueryOperationInput input, String shapeFieldName) {
         try {
-            IQueryFilter queryFilter = null;
+            IQueryFilter2 queryFilter = null;
             if (input.getGeometry() != null) {
-                ISpatialFilter spatialFilter = new SpatialFilter();
+                SpatialFilter spatialFilter = new SpatialFilter();
                 spatialFilter.setGeometryByRef(input.getGeometry());
                 spatialFilter.setGeometryField(shapeFieldName);
                 if (input.getSpatialRel() != null) {
@@ -146,6 +150,7 @@ public class ClusterLayerResource {
                  "ORDER BY %1$s", input.getOrderByFields()
                 ));
             }
+            queryFilter.setSpatialResolution(100000.0d);
             if (StringUtils.isNotEmpty(input.getClusterField())) {
                 queryFilter.setSubFields(input.getClusterField());
                 queryFilter.addField(shapeFieldName);

@@ -43,12 +43,12 @@ public class GeodatabaseObjectCallbackHandlerCursorExtractor implements
     }
 
     @Override
-    public Object extractData(ICursor cursor, IField[] fields)
+    public Object extractData(ICursor cursor, GeodatabaseFieldMap fieldMap)
             throws IOException {
         try {
             StopWatch stopWatch = StopWatch.createAndStart();
 
-            objectCallbackHandler.setFields(fields);
+            objectCallbackHandler.setGeodatabaseFieldMap(fieldMap);
 
             IRow row = null;
             int rowCount = 0;
@@ -90,11 +90,11 @@ public class GeodatabaseObjectCallbackHandlerCursorExtractor implements
     }
 
     @Override
-    public Object extractData(IFeatureCursor featureCursor, IField[] fields) throws IOException {
+    public Object extractData(IFeatureCursor featureCursor, GeodatabaseFieldMap fieldMap) throws IOException {
         try {
             StopWatch stopWatch = StopWatch.createAndStart();
 
-            objectCallbackHandler.setFields(fields);
+            objectCallbackHandler.setGeodatabaseFieldMap(fieldMap);
 
             IFeature feature = null;
             int featureCount = 0;

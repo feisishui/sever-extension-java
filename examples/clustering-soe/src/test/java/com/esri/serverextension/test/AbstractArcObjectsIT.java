@@ -12,19 +12,28 @@
  * limitations under the License.​
  */
 
-package com.esri.serverextension.core.geodatabase;
+package com.esri.serverextension.test;
 
-import com.esri.arcgis.geodatabase.IFeature;
-import com.esri.arcgis.geodatabase.IField;
-import com.esri.arcgis.geodatabase.IRow;
+import com.esri.arcgis.interop.AutomationException;
+import com.esri.serverextension.core.util.ArcObjectsInitializer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
-public interface GeodatabaseObjectCallbackHandler {
+public abstract class AbstractArcObjectsIT {
 
-    public void setGeodatabaseFieldMap(GeodatabaseFieldMap fieldMap) throws IOException;
+	public AbstractArcObjectsIT() {
+	}
 
-    public void processRow(IRow row) throws IOException;
+	@BeforeClass
+	public static void init() throws UnknownHostException, IOException {
+		ArcObjectsInitializer.getInstance().init();
+	}
 
-    public void processFeature(IFeature feature) throws IOException;
+	@AfterClass
+	public static void shutdown() throws AutomationException, IOException {
+		ArcObjectsInitializer.getInstance().shutdown();
+	}
 }

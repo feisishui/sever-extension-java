@@ -22,7 +22,7 @@ import com.esri.arcgis.geodatabase.IField;
 
 public interface GeodatabaseCursorExtractor<T> {
 
-	T extractData(ICursor cursor, IField[] fields) throws IOException;
+	T extractData(ICursor cursor, GeodatabaseFieldMap fieldMap) throws IOException;
 
-	T extractData(IFeatureCursor featureCursor, IField[] fields) throws IOException;
+	T extractData(IFeatureCursor featureCursor, GeodatabaseFieldMap fieldMap) throws IOException;
 }

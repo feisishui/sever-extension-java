@@ -17,6 +17,7 @@ package com.esri.serverextension.cluster;
 import com.esri.arcgis.geodatabase.IFeature;
 import com.esri.arcgis.geodatabase.IField;
 import com.esri.arcgis.geodatabase.IRow;
+import com.esri.serverextension.core.geodatabase.GeodatabaseFieldMap;
 import com.esri.serverextension.core.geodatabase.GeodatabaseObjectCallbackHandler;
 import com.esri.serverextension.core.rest.api.Feature;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 
 public class ClusterAssemblerCallbackHandler implements GeodatabaseObjectCallbackHandler {
 
-    private IField[] fields;
+    private GeodatabaseFieldMap fieldMap;
     private ClusterAssembler clusterAssembler;
     private int featureCount = 0;
 
@@ -39,8 +40,8 @@ public class ClusterAssemblerCallbackHandler implements GeodatabaseObjectCallbac
     }
 
     @Override
-    public void setFields(IField[] fields) throws IOException {
-        this.fields = fields;
+    public void setGeodatabaseFieldMap(GeodatabaseFieldMap fieldMap) throws IOException {
+        this.fieldMap = fieldMap;
     }
 
     @Override
@@ -52,8 +53,8 @@ public class ClusterAssemblerCallbackHandler implements GeodatabaseObjectCallbac
     public void processFeature(IFeature feature) throws IOException {
         featureCount++;
         Map<String, Object> attributes = new LinkedHashMap<>();
-        for (int i = 0; i < fields.length; i++) {
-            attributes.put(fields[i].getName(), feature.getValue(i));
+        for (GeodatabaseFieldMap.FieldIndex fieldIndex : fieldMap.getFieldIndices()) {
+            attributes.put(fieldIndex.getField().getName(), feature.getValue(fieldIndex.getIndex()));
         }
         Feature f = new Feature();
         f.setGeometry(feature.getShape());

@@ -26,21 +26,6 @@
     <description>Shared library for building SOEs and SOIs</description>
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.24</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
@@ -102,18 +87,6 @@
             <version>${com.esri.arcgis.version}</version>
             <scope>system</scope>
             <systemPath>${env.AGSSERVER}\framework\lib\arcobjects.jar</systemPath>
-        </dependency>
-        <!-- Test Depdencies -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.24</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -23,7 +23,7 @@ import com.esri.arcgis.geodatabase.IRow;
 
 public interface GeodatabaseObjectMapper<T> {
 
-	public void setFields(IField[] fields) throws IOException;
+	public void setGeodatabaseFieldMap(GeodatabaseFieldMap fieldMap) throws IOException;
 
 	public T mapRow(IRow row) throws IOException;
 

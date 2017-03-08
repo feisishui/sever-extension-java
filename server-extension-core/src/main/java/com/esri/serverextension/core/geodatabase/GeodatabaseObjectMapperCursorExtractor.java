@@ -45,12 +45,12 @@ public class GeodatabaseObjectMapperCursorExtractor<T> implements
 	}
 
 	@Override
-	public List<T> extractData(ICursor cursor, IField[] fields)
+	public List<T> extractData(ICursor cursor, GeodatabaseFieldMap fieldMap)
 			throws IOException {
 		try {
 			StopWatch stopWatch = StopWatch.createAndStart();
 
-			objectMapper.setFields(fields);
+			objectMapper.setGeodatabaseFieldMap(fieldMap);
 
 			List<T> resultSet = objectsExpected > 0 ? new ArrayList<T>(
                     objectsExpected) : new ArrayList<T>();
@@ -94,11 +94,11 @@ public class GeodatabaseObjectMapperCursorExtractor<T> implements
 	}
 
     @Override
-    public List<T> extractData(IFeatureCursor featureCursor, IField[] fields) throws IOException {
+    public List<T> extractData(IFeatureCursor featureCursor, GeodatabaseFieldMap fieldMap) throws IOException {
         try {
             StopWatch stopWatch = StopWatch.createAndStart();
 
-            objectMapper.setFields(fields);
+            objectMapper.setGeodatabaseFieldMap(fieldMap);
 
             List<T> resultSet = objectsExpected > 0 ? new ArrayList<T>(
                     objectsExpected) : new ArrayList<T>();

@@ -19,6 +19,7 @@ import com.esri.arcgis.interop.AutomationException;
 import com.esri.arcgis.system.Cleaner;
 import com.esri.serverextension.core.util.StopWatch;
 import com.esri.serverextension.core.util.UncheckedIOException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +61,9 @@ public class GeodatabaseTemplate {
 			logger.debug("Preparing query took {} second(s).", stopWatch.stop()
 					.elapsedTimeSeconds());
 			stopWatch.start();
-			IField[] fields = toFieldsArray(cursor.getFields());
-			result = cursorExtractor.extractData(cursor, fields);
+			GeodatabaseFieldMap fieldMap = new GeodatabaseFieldMap();
+			fieldMap.initialize(cursor.getFields(), queryFilter != null ? queryFilter.getSubFields() : null);
+			result = cursorExtractor.extractData(cursor, fieldMap);
 			logger.debug(
 					"Executing query and extracting data from cursor took {} second(s).",
 					stopWatch.stop().elapsedTimeSeconds());
@@ -73,15 +75,5 @@ public class GeodatabaseTemplate {
 			}
 		}
 		return result;
-	}
-	
-	private static final IField[] toFieldsArray(final IFields fields)
-			throws AutomationException, IOException {
-		int fieldCount = fields.getFieldCount();
-		List<IField> fieldList = new ArrayList<>(fieldCount);
-		for (int i = 0; i < fieldCount; i++) {
-			fieldList.add(fields.getField(i));
-		}
-		return fieldList.toArray(new IField[fieldCount]);
 	}
 }

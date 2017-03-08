@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Serverside Clustering</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+/*
+        html, body, #map {
+            padding:0;
+            margin:0;
+            height:100%;
+        }
+        */
+        #AttributeWrapper {
+            position: absolute;
+            top: 15px;
+            left: 400px;
+            z-index: 50;
+        }
+        #HomeButton {
+            position: absolute;
+            top: 95px;
+            left: 20px;
+            z-index: 50;
+        }
+
+        #LegendDiv {
+            position: absolute;
+            top: 15px;
+            left: 100px;
+            z-index: 50;
+        }
+
+        #selectDropDowns {
+            position: absolute;
+            top: 20px;
+            left: 80px;
+        }
+    </style>
+
+
+
+    <script type="text/javascript">
+
+
+
+
+        var path = location.pathname.replace(/[^\/]+$/, '');
+        var djConfig = {
+            async: true,
+            forceGfxRenderer:"svg",
+            parseOnLoad: false,
+            tlmSiblingOfDojo: 0,
+
+            //locale: "de-at",
+            isDebug: 1,
+            packages: [
+                {
+                    name: "layer",
+                    location: path +"js/layer"
+                },
+                {
+                    name: "app",
+                    location: path + "js/app"
+                }
+            ]
+        };
+    </script>
+
+
+
+    <script src="https://js.arcgis.com/3.20/"></script>
+    <script>
+
+        require([
+            "esri/map",
+            "esri/geometry/Extent",
+            "dijit/form/Select",
+            "esri/dijit/HomeButton",
+            "layer/ServerClusterLayer",
+            "esri/dijit/Legend",
+            "dojo/parser",
+            "dojo/dom",
+            "dojo/on",
+            "dojo/domReady!"
+        ], function(
+            Map, Extent, Select, HomeButton, ServerClusterLayer, Legend, Parser, dom, on
+        )  {
+
+            var map = new Map("map", {
+                extent: new Extent({xmin:-118.667,ymin:33.706,xmax:-118.155,ymax:34.329,spatialReference:{wkid:4326}}),
+                basemap: "streets"
+            });
+
+            document.theMap = map;
+
+
+
+
+
+            var home = new HomeButton({
+                map: map
+            }, "HomeButton");
+            home.startup();
+
+
+            //var url = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyFeedSample/MapServer/0";
+
+            //var url = "https://landfire.gov/arcgis/rest/services/Atlas/USGS_EDC_National_Atlas/MapServer/0";
+
+            //var url = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/5";
+
+            //census block points
+
+            //SET the url and the attribute fields here for now
+            var url = "http://localhost:6080/arcgis/rest/services/Clustering/MapServer/exts/clustering/layers/0";
+            var clusterLayer = new ServerClusterLayer({url:url, id:"clusters"});
+            clusterLayer.clusterField = "Valuation";
+
+
+
+
+
+
+            //add the legend
+
+            /*
+            map.on("layers-add-result", function (results) {
+                //add the legend
+                legend = new Legend({
+                    map: map,
+                    layerInfos: [{
+                        layer: results,
+                        title: "test"
+                    }]
+                }, "legendDiv");
+                legend.startup();
+            });
+            */
+
+
+
+
+
+            map.addLayers([clusterLayer]);
+
+            on(dom.byId("attributeW"), "change",
+                function (e) {
+                    console.log(e);
+                    map.clusterField = e.currentTarget.options[e.currentTarget.selectedIndex].value;
+                    clusterLayer.refreshLayer();
+                }
+            );
+
+
+
+        });
+    </script>
+
+
+
+
+</head>
+<body class="claro">
+<div id="map" class="map">
+    <div id="HomeButton"></div>
+
+    <div id="legendDiv"></div>
+
+
+
+</div>
+<div id="selectDropDowns"></div>
+
+
+<div id="AttributeWrapper">
+
+
+    <label for="attributeW">Attribute:</label>
+
+
+    <!-- CARSTEN -->
+    <select id="attributeW" name="attributeW">
+        <option value="Valuation" selected="selected">Valuation</option>
+        <option value="Floor_Area_L_A__Zoning_Code_Definition">Floor Area-L_A_ Zoning Code Definition</option>
+        <option value="F__of_Residential_Dwelling_Units"># of Residential Dwelling Units</option>
+        <option value="Floor_Area_L_A__Building_Code_Definition">Floor Area-L_A_ Building Code Definition</option>
+    </select>
+
+</div>
+
+</body>
+</html>

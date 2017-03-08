@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -38,6 +39,7 @@ public class FeatureSet implements Serializable {
     private boolean hasZ; //optional  Default is false.
     @JsonProperty("hasM")
     private boolean hasM; //optional  Default is false.
+    private Map<String, String> fieldAliases;
     private List<Field> fields;
     private List<Feature> features; //features will include geometry for feature layers only
 
@@ -99,6 +101,14 @@ public class FeatureSet implements Serializable {
 
     public void setHasM(boolean hasM) {
         this.hasM = hasM;
+    }
+
+    public Map<String, String> getFieldAliases() {
+        return fieldAliases;
+    }
+
+    public void setFieldAliases(Map<String, String> fieldAliases) {
+        this.fieldAliases = fieldAliases;
     }
 
     public List<Field> getFields() {
