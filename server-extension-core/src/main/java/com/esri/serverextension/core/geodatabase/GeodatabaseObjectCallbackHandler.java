@@ -12,33 +12,19 @@
  * limitations under the License.​
  */
 
-package com.esri.serverextension.cluster;
+package com.esri.serverextension.core.geodatabase;
 
-/**
- * Created by kcoffin on 2/8/17.
- */
-public class Feature {
+import com.esri.arcgis.geodatabase.IFeature;
+import com.esri.arcgis.geodatabase.IField;
+import com.esri.arcgis.geodatabase.IRow;
 
-    private double _value;
-    private Point _point;
+import java.io.IOException;
 
-    public Feature(Point point, double value) {
-        _point = point;
-        _value = value;
-    }
+public interface GeodatabaseObjectCallbackHandler {
 
-    public double getValue() {
-        return _value;
-    }
+    public void setFields(IField[] fields) throws IOException;
 
+    public void processRow(IRow row) throws IOException;
 
-    public Point getPoint() {
-        return _point;
-    }
-
-    public void print() {
-        System.out.print("Feature  value:" + _value + "  ");
-        _point.print();
-        System.out.println();
-    }
+    public void processFeature(IFeature feature) throws IOException;
 }

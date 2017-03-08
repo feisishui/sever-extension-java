@@ -14,12 +14,11 @@
 
 package com.esri.serverextension.cluster;
 
-import javax.annotation.Resource;
-
+import com.esri.arcgis.server.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.esri.arcgis.server.json.JSONObject;
+import javax.annotation.Resource;
 
 @Service
 public class AboutResource {

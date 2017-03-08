@@ -15,30 +15,37 @@
 package com.esri.serverextension.cluster;
 
 import com.esri.arcgis.carto.IMapLayerInfo;
+import com.esri.arcgis.server.json.JSONArray;
 import com.esri.arcgis.server.json.JSONObject;
 import com.esri.serverextension.core.server.ServerObjectExtensionContext;
 import com.esri.serverextension.core.util.ArcObjectsInteropException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
-public class LayerResource {
+public class ClusterLayersResource {
 
-    @RequestMapping("/layers/{layerId}")
-    public JSONObject getLayerResource(@PathVariable("layerId") int layerId, ServerObjectExtensionContext serverContext) {
-        IMapLayerInfo layerInfo = MapServerUtilities.getPointFeatureLayerByID(layerId, serverContext);
-        JSONObject layerObject = new JSONObject();
-        try {
-            layerObject.put("name", layerInfo.getName());
-            layerObject.put("id", layerInfo.getID());
-            layerObject.put("description", layerInfo.getDescription());
-        } catch (IOException ex) {
-            throw new ArcObjectsInteropException(
-                    String.format("Failed to get details for layer: %1$d", layerId));
+    @RequestMapping("/layers")
+    public JSONObject getLayersResource(ServerObjectExtensionContext serverContext) {
+        JSONArray layersArray = new JSONArray();
+        List<IMapLayerInfo> pointFeatureLayers = MapServerUtilities.getPointFeatureLayers(serverContext);
+        for (IMapLayerInfo layerInfo : pointFeatureLayers) {
+            try {
+                JSONObject layer = new JSONObject();
+                layer.put("name", layerInfo.getName());
+                layer.put("id", layerInfo.getID());
+                layer.put("description", layerInfo.getDescription());
+                layersArray.put(layer);
+            } catch (IOException ex) {
+                throw new ArcObjectsInteropException(
+                        "Failed to get details from map layer info.");
+            }
         }
-        return layerObject;
+        JSONObject response = new JSONObject();
+        response.put("layers", layersArray);
+        return response;
     }
 }

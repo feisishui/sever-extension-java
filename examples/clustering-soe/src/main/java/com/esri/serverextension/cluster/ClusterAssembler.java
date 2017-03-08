@@ -14,130 +14,100 @@
 
 package com.esri.serverextension.cluster;
 
+import com.esri.serverextension.core.rest.api.Extent;
+import com.esri.serverextension.core.rest.api.Feature;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Assembles the cluster
+ * Assembles the cluster.
+ *
+ * Created by kcoffin on 2/8/17.
+ *
  */
 public class ClusterAssembler {
 
     //The grid's extent
-    private Extent _extent;
-
+    private Extent bbox;
 
     //cellsize of grid
-    private double _cellSize;
+    private double cellSize;
 
-    private double _mapUnitsPerPixel;
-
-    //number of columns in grid
-    private int _numColumns;
+    private double mapUnitsPerPixel;
 
     //number of columns in grid
-    private int _numRows;
+    private int numColumns;
 
+    //number of columns in grid
+    private int numRows;
 
     //the cells which keeps the cluster info
-    private Map<Integer, ArrayList<Cluster>> _cells;
+    private Map<Integer, ArrayList<Cluster>> cells;
 
     //the desired cluster distance in pixels
-    private double _clusterDistanceInPixels;
+    private double clusterDistanceInPixels;
 
     //All the clusters which are created
-    private ArrayList<Cluster> _clusters;
+    private List<Cluster> clusters;
 
+    // The field to determine a clusters weight
+    private String clusterFieldName;
 
     /**
-     * Assemble the cluster
+     * Creates a new cluster assembler.
      *
-     * @param features                all the features
      * @param mapUnitsPerPixel        map units per pixel (like meters per pixel)
      * @param clusterDistanceInPixels cluster distance in pixels
-     * @param extent                  the extent in real world coordinates
+     * @param bbox                    the extent in real world coordinates
+     * @param clusterFieldName        the field to determine a clusters weight
      */
-    public ClusterAssembler(ArrayList<Feature> features, double mapUnitsPerPixel,
-                            double clusterDistanceInPixels, Extent extent) {
-        addAllFeatures(features, mapUnitsPerPixel, clusterDistanceInPixels, extent);
+    public ClusterAssembler(double mapUnitsPerPixel,
+                            double clusterDistanceInPixels,
+                            Extent bbox,
+                            String clusterFieldName) {
+        cells = new HashMap<>();
+        this.mapUnitsPerPixel = mapUnitsPerPixel;
+        this.clusterDistanceInPixels = clusterDistanceInPixels;
+        cellSize = mapUnitsPerPixel * this.clusterDistanceInPixels;
+        this.bbox = bbox;
+        numColumns = getGridColumn(bbox.getWidth()) + 1;
+        numRows = getGridRow(bbox.getHeight()) + 1;
+        clusters = new ArrayList<>();
+        this.clusterFieldName = clusterFieldName;
     }
 
     /**
-     * Retrieves all the clusters
+     * Returns the assembled clusters.
      *
-     * @return
+     * @return the assembled clusters
      */
-    public ArrayList<Cluster> getClusters() {
-        return _clusters;
+    public List<Cluster> getClusters() {
+        return clusters;
     }
-
-
-    //Adds all the features. Called internally by the ctor
-    private void addAllFeatures(ArrayList<Feature> features, double mapUnitsPerPixel,
-                                double clusterDistanceInPixels, Extent extent
-    ) {
-        _cells = new HashMap<>();
-        _mapUnitsPerPixel = mapUnitsPerPixel;
-        _clusterDistanceInPixels = clusterDistanceInPixels;
-        _cellSize = mapUnitsPerPixel * _clusterDistanceInPixels;
-        _extent = extent;
-        _numColumns = getGridColumn(extent.getWidth()) + 1;
-        _numRows = getGridRow(extent.getHeight()) + 1;
-        _clusters = new ArrayList<>();
-
-        //first sort the features based on the clusterfieldIndex
-        // Sorting by Lambda
-        Collections.sort(features, (Feature feature2, Feature feature1) ->
-                ((Double) feature1.getValue()).compareTo(feature2.getValue()));
-
-
-        /* JAVA 1.7
-        Collections.sort(features, new Comparator<Feature>() {
-            @Override
-            public int compare(Feature feature2, Feature feature1)
-            {
-                return  ((Double)feature1.getValue()).compareTo((Double)feature2.getValue());
-            }
-        });
-        */
-
-        for (Feature feature : features) {
-            addFeature(feature);
-        }
-
-
-        for (Cluster cluster : _clusters) {
-            fixCluster(cluster);
-        }
-
-
-        for (Cluster cluster : _clusters) {
-            fixCluster(cluster);
-        }
-
-/*
-        System.out.println("+++++++++++++++++++++++++++++++++++++");
-        for (Cluster cluster:_clusters){
-            examineCluster(cluster);
-        }
-*/
-/*
-        for (Cluster cluster:_clusters){
-            cluster.print();
-        }
-*/
-
-    }
-
 
     /**
-     * Add a feature
+     * Builds the clusters. Call this method after all features have been added and before accessing the
+     * assembled clusters.
+     */
+    public void buildClusters() {
+//        for (Cluster cluster : clusters) {
+//            fixCluster(cluster);
+//        }
+//        for (Cluster cluster : clusters) {
+//            fixCluster(cluster);
+//        }
+    }
+
+    /**
+     * Adds a feature.
      *
      * @param feature
      */
-    private void addFeature(Feature feature) {
-        Cluster closestCluster = getClosestCluster(feature.getPoint());
+    public void addFeature(Feature feature) {
+        Cluster closestCluster = getClosestCluster(new ClusterPoint(feature.getGeometry()));
 
         if (closestCluster != null) {
             addFeatureToCluster(feature, closestCluster);
@@ -149,12 +119,12 @@ public class ClusterAssembler {
 
     //from yValue real-world, what is the grid row
     private int getGridRow(double yValue) {
-        return (int) Math.floor((yValue - _extent.getYMin()) / _cellSize);
+        return (int) Math.floor((yValue - bbox.getYmin()) / cellSize);
     }
 
     //from xValue real-world, what is the grid column
     private int getGridColumn(double xValue) {
-        return (int) Math.floor((xValue - _extent.getXMin()) / _cellSize);
+        return (int) Math.floor((xValue - bbox.getXmin()) / cellSize);
     }
 
     //add a feature to an EXISTING cluster
@@ -163,7 +133,7 @@ public class ClusterAssembler {
         removeClusterFromGrid(cluster);
 
         //add the feature to the cluster
-        cluster.addFeature(feature);
+        cluster.addFeature(feature, getFeatureValue(feature));
 
         //add it back in to the grid
         addClusterToGrid(cluster);
@@ -171,11 +141,11 @@ public class ClusterAssembler {
 
     //remove a cluster from the grid (it is already in the grid)
     private void removeClusterFromGrid(Cluster cluster) {
-        Point pt = cluster.getPoint();
+        ClusterPoint pt = cluster.getPoint();
         int row = getGridRow(pt.y);
         int column = getGridColumn(pt.x);
-        int index = _numRows * row + column;
-        ArrayList<Cluster> cell = _cells.get(index);
+        int index = numRows * row + column;
+        ArrayList<Cluster> cell = cells.get(index);
 
         if (cell != null) {
             cell.remove(cluster);
@@ -186,23 +156,23 @@ public class ClusterAssembler {
 
     //Add the cluster to the grid
     private void addClusterToGrid(Cluster cluster) {
-        Point pt = cluster.getPoint();
+        ClusterPoint pt = cluster.getPoint();
         int row = getGridRow(pt.y);
         int column = getGridColumn(pt.x);
-        int index = _numRows * row + column;
-        ArrayList<Cluster> cell = _cells.get(index);
+        int index = numRows * row + column;
+        ArrayList<Cluster> cell = cells.get(index);
 
         if (cell == null) {
             cell = new ArrayList<>();
-            _cells.put(index, cell);
+            cells.put(index, cell);
         }
         cell.add(cluster);
     }
 
     private void createCluster(Feature feature) {
-        Cluster cluster = new Cluster(feature);
+        Cluster cluster = new Cluster(feature, getFeatureValue(feature));
         addClusterToGrid(cluster);
-        _clusters.add(cluster);
+        clusters.add(cluster);
     }
 
 
@@ -212,12 +182,12 @@ public class ClusterAssembler {
      * @param pt
      * @return
      */
-    public Cluster getClosestCluster(Point pt) {
+    private Cluster getClosestCluster(ClusterPoint pt) {
         int row = getGridRow(pt.y);
         int column = getGridColumn(pt.x);
 
         //should never happen as all features should come from within the extent
-        if (row < 0 || column < 0 || row >= _numRows || column >= _numColumns) {
+        if (row < 0 || column < 0 || row >= numRows || column >= numColumns) {
             System.out.println("There's an error in the query");
             return null;
         }
@@ -227,7 +197,7 @@ public class ClusterAssembler {
         if (row > 0) {
             yStart = row - 1;
         }
-        if (row < _numRows - 1) {
+        if (row < numRows - 1) {
             yEnd = row + 1;
         }
 
@@ -237,15 +207,15 @@ public class ClusterAssembler {
         if (column > 0) {
             xStart = column - 1;
         }
-        if (column < _numColumns - 1) {
+        if (column < numColumns - 1) {
             xEnd = column + 1;
         }
 
         /*
-        int xStart = (int)(Math.floor((extent.xmin - this._xmin) / this._cellSize));
-        int xEnd = (int)(Math.floor((extent.xmax - this._xmin) / this._cellSize));
-        int yStart = (int)(Math.floor((extent.ymin - this._ymin) / this._cellSize));
-        int yEnd = (int)(Math.floor((extent.ymax - this._ymin) / this._cellSize));
+        int xStart = (int)(Math.floor((extent.xmin - this._xmin) / this.cellSize));
+        int xEnd = (int)(Math.floor((extent.xmax - this._xmin) / this.cellSize));
+        int yStart = (int)(Math.floor((extent.ymin - this._ymin) / this.cellSize));
+        int yEnd = (int)(Math.floor((extent.ymax - this._ymin) / this.cellSize));
         */
 
         Cluster minCluster = null;
@@ -253,8 +223,8 @@ public class ClusterAssembler {
 
         for (int x = xStart; x <= xEnd; x++) {
             for (int y = yStart; y <= yEnd; y++) {
-                int index = _numRows * y + x;
-                ArrayList<Cluster> cell = _cells.get(index);
+                int index = numRows * y + x;
+                ArrayList<Cluster> cell = cells.get(index);
                 if (cell != null) {
                     for (int i = 0; i < cell.size(); i++) {
                         Cluster cluster = cell.get(i);
@@ -270,7 +240,7 @@ public class ClusterAssembler {
         if (minDis2 > 0) {
             minDis2 = Math.sqrt(minDis2);
         }
-        if (minDis2 > _cellSize) {
+        if (minDis2 > cellSize) {
             return null;
         }
         return minCluster;
@@ -278,21 +248,19 @@ public class ClusterAssembler {
 
 
     //This examines a cluster and determines if all features in it are the closest to it.
-    public void examineCluster(Cluster cluster) {
-
-
-        ArrayList<Feature> features = cluster.getFeatures();
+    private void examineCluster(Cluster cluster) {
+        List<Feature> features = cluster.getFeatures();
         for (int k = 0; k < features.size(); k++) {
             Feature feature = features.get(k);
-            Point p = feature.getPoint();
+            ClusterPoint p = new ClusterPoint(feature.getGeometry());
             Cluster clust = getClosestCluster(p);
             if (clust != cluster) {
-                double pixels = cluster.getPoint().distance(p) / _mapUnitsPerPixel;
+                double pixels = cluster.getPoint().distance(p) / mapUnitsPerPixel;
                 System.out.print("Not closest to cluster...pixel Distance=" + Math.round(pixels));
                 if (clust == null) {
                     System.out.println();
                 } else {
-                    double closerPixels = clust.getPoint().distance(p) / _mapUnitsPerPixel;
+                    double closerPixels = clust.getPoint().distance(p) / mapUnitsPerPixel;
                     System.out.println("   Closer to distance=" + Math.round(closerPixels));
                 }
             }
@@ -300,32 +268,31 @@ public class ClusterAssembler {
     }
 
 
-    public void fixCluster(Cluster cluster) {
-        double distance = _cellSize;//this._mapUnitsPerPixel*this._clusterDistanceInPixels;
+    private void fixCluster(Cluster cluster) {
+        double distance = cellSize;//this.mapUnitsPerPixel*this.clusterDistanceInPixels;
         double distanceSq = distance * distance;
         double test = distanceSq * 2.0;
-        ArrayList<Feature> features = cluster.getFeatures();
+        List<Feature> features = cluster.getFeatures();
         for (int k = features.size() - 1; k >= 0; k--) {
             Feature feature = features.get(k);
-            Point p = feature.getPoint();
+            ClusterPoint p = new ClusterPoint(feature.getGeometry());
 
             Cluster minPt = this.getClosestCluster(p);
 
             if (minPt != null && minPt != cluster) {
-                double ptCount = feature.getValue();
+                double featureValue = getFeatureValue(feature);
 
-                double count = cluster.getValue();
+                double clusterValue = cluster.getValue();
 
                 //features.splice(k, 1);
                 features.remove(k);
 
-                double ptCountCount = count - ptCount;
-                cluster.setClusterCount(ptCountCount);
-                Point clusterPoint = cluster.getPoint();
-                if (ptCountCount > 0) {
-                    double ptc = ptCount / ptCountCount;
-                    double ctc = count / ptCountCount;
-
+                double newClusterValue = clusterValue - featureValue;
+                cluster.setValue(newClusterValue);
+                ClusterPoint clusterPoint = cluster.getPoint();
+                if (newClusterValue > 0) {
+                    double ptc = featureValue / newClusterValue;
+                    double ctc = clusterValue / newClusterValue;
 
                     double xx = (clusterPoint.x * ctc) - (p.x * ptc);//x = (cluster.x*count-pt.x*ptCount)/(count-ptCount)
                     double yy = (clusterPoint.y * ctc) - (p.y * ptc);
@@ -339,31 +306,24 @@ public class ClusterAssembler {
                     clusterPoint.x = 0;
                     clusterPoint.y = 0;
                 }
-
-
                 //add to another
                 //this._clusterAddPoint(feature, minPt, ptCount);
-                minPt.addPointCluster(feature, ptCount);
-
-
+                minPt.addPointCluster(feature, featureValue);
             }
-
         }
-
-
     }
 
-    public void addCellsForAllClusters() {
-        //this._cells = [];
-        _cells = new HashMap<>();
-        for (Cluster cluster : _clusters) {
+    private void addCellsForAllClusters() {
+        //this.cells = [];
+        cells = new HashMap<>();
+        for (Cluster cluster : clusters) {
             addCells(cluster);
         }
 
     }
 
-    public void addCells(Cluster cluster) {
-        Point clusterPoint = cluster.getPoint();
+    private void addCells(Cluster cluster) {
+        ClusterPoint clusterPoint = cluster.getPoint();
         int row = getGridRow(clusterPoint.y);
         int column = getGridColumn(clusterPoint.x);
 
@@ -372,7 +332,7 @@ public class ClusterAssembler {
         if (row > 0) {
             yStart = row - 1;
         }
-        if (row < _numRows - 1) {
+        if (row < numRows - 1) {
             yEnd = row + 1;
         }
 
@@ -382,23 +342,34 @@ public class ClusterAssembler {
         if (column > 0) {
             xStart = column - 1;
         }
-        if (column < _numColumns - 1) {
+        if (column < numColumns - 1) {
             xEnd = column + 1;
         }
 
         for (int i = xStart; i <= xEnd; i++) {
             for (int j = yStart; j <= yEnd; j++) {
-                int index = this._numRows * j + i;
-                ArrayList<Cluster> cell = _cells.get(index);
+                int index = this.numRows * j + i;
+                ArrayList<Cluster> cell = cells.get(index);
                 if (cell == null) {
                     cell = new ArrayList<>();
-                    _cells.put(index, cell);
+                    cells.put(index, cell);
                 }
                 cell.add(cluster);
             }
         }
 
 
+    }
+
+    private double getFeatureValue(Feature feature) {
+        Object value = feature.getAttributes().get(clusterFieldName);
+        if (value == null) {
+            return 0.0d;
+        }
+        if (value instanceof Number) {
+            return ((Number)feature.getAttributes().get(clusterFieldName)).doubleValue();
+        }
+        throw new IllegalArgumentException("Cluster field type must be numeric.");
     }
 
 }

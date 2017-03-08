@@ -17,6 +17,7 @@ package com.esri.serverextension.cluster;
 import com.esri.arcgis.carto.*;
 import com.esri.arcgis.geodatabase.FeatureClass;
 import com.esri.arcgis.geodatabase.IFeatureClass;
+import com.esri.arcgis.geometry.ISpatialReference;
 import com.esri.arcgis.geometry.esriGeometryType;
 import com.esri.arcgis.interop.Cleaner;
 import com.esri.serverextension.core.server.ServerObjectExtensionContext;
@@ -77,5 +78,37 @@ public class MapServerUtilities {
             }
         }
         throw new IllegalArgumentException(String.format("No such point feature layer: %1$d", id));
+    }
+
+    public static final IFeatureClass getPointFeatureClassByLayerID(int layerId,
+                                                               ServerObjectExtensionContext serverContext) {
+        try {
+            IMapLayerInfo layerInfo = getPointFeatureLayerByID(layerId, serverContext);
+            IMapServerDataAccess mapServerDataAccess = (IMapServerDataAccess) serverContext
+                    .getServerObject();
+            IMapServer3 mapServer = (IMapServer3) mapServerDataAccess;
+            String mapName = mapServer.getDefaultMapName();
+            Object dataSource = mapServerDataAccess
+                    .getDisplayDataSource(mapName, layerInfo.getID());
+            return new FeatureClass(dataSource);
+        } catch (IOException ex) {
+            throw new ArcObjectsInteropException(
+                    "Failed to get point feature class from map server object.");
+        }
+    }
+
+    public static final ISpatialReference getMapSpatialReference(ServerObjectExtensionContext serverContext) {
+        try {
+            IMapServer3 mapServer = (IMapServer3) serverContext
+                    .getServerObject();
+            String mapName = mapServer.getDefaultMapName();
+            IMapServerInfo mapServerInfo = (IMapServerInfo) mapServer
+                    .getServerInfo(mapName);
+            IMapDescription mapDescription = mapServerInfo.getDefaultMapDescription();
+            return mapDescription.getSpatialReference();
+        } catch (IOException ex) {
+            throw new ArcObjectsInteropException(
+                    "Failed to get point feature class from map server object.");
+        }
     }
 }

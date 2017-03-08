@@ -16,6 +16,7 @@ package com.esri.serverextension.core.rest.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -47,5 +48,10 @@ public class Transformation implements Serializable {
 
   public void setTransformForward(boolean transformForward) {
     this.transformForward = transformForward;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
   }
 }

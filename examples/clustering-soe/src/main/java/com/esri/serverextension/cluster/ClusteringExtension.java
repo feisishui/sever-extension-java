@@ -14,10 +14,6 @@
 
 package com.esri.serverextension.cluster;
 
-import com.esri.arcgis.datasourcesGDB.SqlWorkspace;
-import com.esri.arcgis.geodatabase.ISqlWorkspace;
-import com.esri.arcgis.geodatabase.IWorkspace;
-import com.esri.arcgis.geodatabase.esriDatasetType;
 import com.esri.arcgis.interop.AutomationException;
 import com.esri.arcgis.interop.extn.ArcGISExtension;
 import com.esri.arcgis.interop.extn.ServerObjectExtProperties;
@@ -25,12 +21,6 @@ import com.esri.arcgis.server.json.JSONArray;
 import com.esri.arcgis.server.json.JSONObject;
 import com.esri.arcgis.system.ServerUtilities;
 import com.esri.serverextension.core.server.AbstractRestServerObjectExtension;
-import com.esri.serverextension.core.server.AbstractRestServerObjectInterceptor;
-import com.esri.serverextension.core.server.MapServerUtilities;
-import com.esri.serverextension.core.server.ServerObjectExtensionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
@@ -42,10 +32,10 @@ import java.io.IOException;
         servicetype = "MapService")
 public class ClusteringExtension extends AbstractRestServerObjectExtension {
 
-    public static final String QUERY_OPERATION_PARAMETER_NAMES = "text, geometry, "
-            + "geometryType, inSR, spatialRel, relationParam, where, objectIds"
-            + "distance, units, outFields, outSR, orderByFields, outStatistics"
-            + "intersectGeometryDistance, intersectGeometryUnits, intersectLayers, datumTransformation";
+    public static final String QUERY_OPERATION_PARAMETER_NAMES = "bbox, " +
+            "mapUnitsPerPixel, clusterDistanceInPixels, clusterField, " +
+            "geometry, geometryType, inSR, spatialRel, relationParam, where, " +
+            "outField, outSR, orderByFields";
 
     @Override
     protected void doConfigure(

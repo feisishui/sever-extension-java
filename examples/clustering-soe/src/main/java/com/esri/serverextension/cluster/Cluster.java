@@ -14,83 +14,72 @@
 
 package com.esri.serverextension.cluster;
 
+import com.esri.serverextension.core.rest.api.Feature;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kcoffin on 2/8/17.
  */
 public class Cluster {
 
-    private double _clusterCount;
-    private Point _point;
-    private ArrayList<Feature> _features;
+    private double value;
+    private ClusterPoint point;
+    private List<Feature> features;
 
     //A cluster needs to be created with at least one feature
-    public Cluster(Feature feature) {
-        _features = new ArrayList<>();
-        _point = new Point(feature.getPoint());
-        _clusterCount = feature.getValue();
-        _features.add(feature);
+    public Cluster(Feature feature, double featureValue) {
+        features = new ArrayList<>();
+        point = new ClusterPoint(feature.getGeometry());
+        value = featureValue;
+        features.add(feature);
     }
 
-    public Point getPoint() {
-        return _point;
+    public ClusterPoint getPoint() {
+        return point;
     }
 
-    public void setClusterCount(double ct) {
-        _clusterCount = ct;
+    public double getValue() {
+        return value;
     }
 
-    public void addFeature(Feature feature) {
-        double value = feature.getValue();
-        double count = _clusterCount;
-        _features.add(feature);
-        double ptc = value / (count + value);
-        double ctc = count / (count + value);
-        Point cluster = _point;
-        Point p = feature.getPoint();
+    public void setValue(double ct) {
+        value = ct;
+    }
+
+    public void addFeature(Feature feature, double featureValue) {
+        features.add(feature);
+        double ptc = featureValue / (value + featureValue);
+        double ctc = value / (value + featureValue);
+        ClusterPoint cluster = point;
+        ClusterPoint p = new ClusterPoint(feature.getGeometry());
 
         double x = (p.x * ptc + (cluster.x * ctc));
         double y = (p.y * ptc + (cluster.y * ctc));
         cluster.x = x;
         cluster.y = y;
-        _clusterCount += value;
+        this.value += featureValue;
     }
 
-    public void addPointCluster(Feature feature, double ptCount) {
-        double count, x, y;
-        count = getValue();
+    public void addPointCluster(Feature feature, double featureValue) {
+        double x, y;
 
-        Point p = feature.getPoint();
+        ClusterPoint p = new ClusterPoint(feature.getGeometry());
         getFeatures().add(feature);
 
-        double ptc = ptCount / (count + ptCount);
-        double ctc = count / (count + ptCount);
+        double ptc = featureValue / (value + featureValue);
+        double ctc = value / (value + featureValue);
 
-        x = (p.x * ptc + (_point.x * ctc));
-        y = (p.y * ptc + (_point.y * ctc));
-        _clusterCount += ptCount;
-        _point.x = x;
-        _point.y = y;
+        x = (p.x * ptc + (point.x * ctc));
+        y = (p.y * ptc + (point.y * ctc));
+        value += featureValue;
+        point.x = x;
+        point.y = y;
     }
 
-    public double getValue() {
-        return _clusterCount;
-    }
-
-    public ArrayList<Feature> getFeatures() {
-        return _features;
-    }
-
-
-    public void print() {
-        System.out.print("Cluster  value:" + _clusterCount + "  ");
-        _point.print();
-        System.out.println();
-        for (Feature f : _features) {
-            f.print();
-        }
-        System.out.println("==============");
+    public List<Feature> getFeatures() {
+        return features;
     }
 
 }

@@ -88,7 +88,7 @@ public final class DelegateMethodInvoker implements RestDelegate {
                                     + "delegate method '%2$s' in '%3$s' with the following "
                                     + "arguments: %4$s", returnValue, methodName,
                             className, Arrays.toString(arguments));
-            throw new ServerObjectExtensionException(message, ex.getCause());
+            throw new ServerObjectExtensionException(message, ex);
         }
 
         return response;

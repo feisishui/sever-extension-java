@@ -30,22 +30,24 @@ public class StopWatch {
         return timer;
     }
 
-    public void start() {
+    public StopWatch start() {
         if (isRunning) {
             throw new IllegalStateException("StopWatch is already running.");
         }
         isRunning = true;
         hasElapsed = false;
         startTime = System.currentTimeMillis();
+        return this;
     }
 
-    public void stop() {
+    public StopWatch stop() {
         if (!isRunning) {
             throw new IllegalStateException("StopWatch is not running.");
         }
         elapsedTime = System.currentTimeMillis() - startTime;
         isRunning = false;
         hasElapsed = true;
+        return this;
     }
 
     public long elapsedTimeMillis() {
@@ -53,7 +55,7 @@ public class StopWatch {
             throw new IllegalStateException("StopWatch is already running.");
         }
         if (!hasElapsed) {
-            throw new IllegalStateException("StopWatch was not run.");
+            throw new IllegalStateException("StopWatch has never been started.");
         }
         return elapsedTime;
     }

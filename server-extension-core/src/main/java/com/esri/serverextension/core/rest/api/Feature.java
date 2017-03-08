@@ -14,42 +14,45 @@
 
 package com.esri.serverextension.core.rest.api;
 
+
+import com.esri.arcgis.geometry.IGeometry;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.Map;
 
-/**
- * kyunam_kim@esri.com on 1/5/17.
- */
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RangeValue implements Serializable {
+public class Feature implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String name;
-  private Object value;
+    private IGeometry geometry;
+    private Map<String, Object> attributes;
 
-  public String getName() {
-    return name;
-  }
+    public Feature() {
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public IGeometry getGeometry() {
+        return geometry;
+    }
 
-  public Object getValue() {
-    return value;
-  }
+    public void setGeometry(IGeometry geometry) {
+        this.geometry = geometry;
+    }
 
-  public void setValue(Object value) {
-    this.value = value;
-  }
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
-  }
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

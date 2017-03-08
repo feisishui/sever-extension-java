@@ -15,6 +15,7 @@
 package com.esri.serverextension.core.rest.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -67,5 +68,10 @@ public class RenderingRule implements Serializable {
 
   public void setVariableName(String variableName) {
     this.variableName = variableName;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
   }
 }

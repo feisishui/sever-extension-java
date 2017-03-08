@@ -14,13 +14,21 @@
 
 package com.esri.serverextension.core.rest.api;
 
+import com.esri.arcgis.geodatabase.IQueryFilter;
+import com.esri.arcgis.geodatabase.ISpatialFilter;
+import com.esri.arcgis.geodatabase.SpatialFilter;
+import com.esri.arcgis.geometry.esriSpatialRelationEnum;
 import com.esri.arcgis.geometry.IGeometry;
 import com.esri.arcgis.geometry.ISpatialReference;
+import com.esri.serverextension.core.util.ArcObjectsInteropException;
+import com.esri.serverextension.core.util.GenericEsriEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -333,4 +341,5 @@ public class QueryMapServiceLayerOperationInput extends OperationInput {
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
   }
+
 }
