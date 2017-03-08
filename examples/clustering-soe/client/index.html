@@ -102,36 +102,17 @@
 
             document.theMap = map;
 
-
-
-
-
             var home = new HomeButton({
                 map: map
             }, "HomeButton");
             home.startup();
-
-
-            //var url = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyFeedSample/MapServer/0";
-
-            //var url = "https://landfire.gov/arcgis/rest/services/Atlas/USGS_EDC_National_Atlas/MapServer/0";
-
-            //var url = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/5";
-
-            //census block points
 
             //SET the url and the attribute fields here for now
             var url = "http://localhost:6080/arcgis/rest/services/Clustering/MapServer/exts/clustering/layers/0";
             var clusterLayer = new ServerClusterLayer({url:url, id:"clusters"});
             clusterLayer.clusterField = "Valuation";
 
-
-
-
-
-
             //add the legend
-
             /*
             map.on("layers-add-result", function (results) {
                 //add the legend
@@ -146,16 +127,12 @@
             });
             */
 
-
-
-
-
             map.addLayers([clusterLayer]);
 
             on(dom.byId("attributeW"), "change",
                 function (e) {
                     console.log(e);
-                    map.clusterField = e.currentTarget.options[e.currentTarget.selectedIndex].value;
+                    clusterLayer.clusterField = e.currentTarget.options[e.currentTarget.selectedIndex].value;
                     clusterLayer.refreshLayer();
                 }
             );
@@ -186,8 +163,6 @@
 
     <label for="attributeW">Attribute:</label>
 
-
-    <!-- CARSTEN -->
     <select id="attributeW" name="attributeW">
         <option value="Valuation" selected="selected">Valuation</option>
         <option value="Floor_Area_L_A__Zoning_Code_Definition">Floor Area-L_A_ Zoning Code Definition</option>
